@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+	<title>play2</title>
+	<meta charset="utf-8"/>
+	<style>
+	</style>
+</head>
+<body onload="onLoad()">
+	<script>
+		function onLoad(){
+			var sFolder="";
+			var sTxt="c:\\la\\li\\lo\\lu";
+			var jj=0;
+			var re=/[^\\\\]+([\\\\]|$)/ig;
+			if (re.test(sTxt)){
+				
+				var arMt=sTxt.match(re);
+				alert (arMt.length);
+				for (jj=0;jj<arMt.length;jj++){
+					sFolder+=arMt[jj]+ (arMt[jj].indexOf("\\")>-1 ? "" : "\\");
+					alert (sFolder);
+				}
+			}
+			alert ("the end");
+		}
+	</script>
+</body>
+</html>

@@ -20,12 +20,14 @@ app.route('/upload')
         req.busboy.on('file', function (fieldname, file, filename) {
             console.log("Uploading: " + filename);
 
-            //Path where image will be uploaded
-            fstream = fs.createWriteStream(__dirname + '/test_files/' + filename);
+            var sFileNm=filename.replace(/[.].+/ig,"");
+            var sFolderNm=getFolderNm(sFileNm);
+           dirExists(__dirname + "\\"+sFolderNm+"\\");
+            fstream = fs.createWriteStream(__dirname + "\\"+sFolderNm+"\\" + filename);
             file.pipe(fstream);
             fstream.on('close', function () {    
                 console.log("Upload Finished of " + filename);              
-                res.redirect('back');           //where to go next
+//                res.redirect('back');           //where to go next
             });
         });
     });
@@ -33,3 +35,28 @@ app.route('/upload')
 var server = app.listen(3030, function() {
     console.log('Listening on port %d', server.address().port);
 });
+app.route("/download").get(function (req, res, next) {
+
+    var sFileNm=req.query.flNm;
+    var sFolderNm=__dirname + "\\"+getFolderNm(sFileNm);
+    var sPath=sFolderNm+"\\"+sFileNm+".txt";
+    var readStream = fs.createReadStream(sPath);
+    // We replaced all the event handlers with a simple call to readStream.pipe()
+    readStream.pipe(res);
+    res.on("close",function(){
+        console.log("finished downloading - "+sFileNm);
+    })
+})
+
+
+function dirExists(sPath){
+    if (!fs.existsSync(sPath))fs.mkdirSync(sPath);
+}
+
+function getFolderNm(sFileNm){
+    var sFolderNm="remainder";
+    if (!isNaN(sFileNm)){
+        sFolderNm=Math.floor(parseFloat(sFileNm)/1000+1);
+    }
+    return sFolderNm;
+}
